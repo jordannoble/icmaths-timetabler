@@ -6,7 +6,7 @@ This web app is built using [Flask](http://flask.pocoo.org/) and hosted at [http
 pip install -r requirements.txt
 ```
 
-The web server can then be started by running
+You will also need a local [redis](http://redis.io/) server running. The web server can then be started by running
 
 ```
 python run.py
