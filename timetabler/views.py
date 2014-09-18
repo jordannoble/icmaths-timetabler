@@ -41,9 +41,10 @@ def route_module_list():
 def ics(filename):
   try:
     with open('/tmp/' + filename + '.ics'):
-      return send_from_directory('/tmp', filename + '.ics',
-                                mimetype='text/Calendar',
-                                attachment_filename='ics')
+      filename += '.ics'
+      return send_from_directory(directory='/tmp', filename=filename,
+                                 as_attachment=True,
+                                 attachment_filename=filename)
   except IOError:
     return 'Expired.'
 
