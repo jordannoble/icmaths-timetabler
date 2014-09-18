@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+				<title>ICMaths Timetabler</title>
+        <meta name="description" content="Create your own custom IC Maths timetable calendar">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+        <script src="{{ url_for('static', filename='js/modernizr-2.6.2-respond-1.1.0.min.js') }}"></script>
+
+		<script type=text/javascript>
+			$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+		</script>
+
+    </head>
+    <body>
+ 			<!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience. I strongly recommend <a href="http://firefox.com">Mozilla Firefox</a>.</p>
+      <![endif]-->
+	    <div class="container">
+
+	    <div class="row">
+	    	<h1 class="title">
+	    		IC Maths Timetabler ({{ season }} {{ year }})
+	    	</h1>
+	    </div>
+
+			<div class="row">
+				<div id="settings-icon-row" class="pull-right right20">
+					<span id="settings-icon" class="glyphicon glyphicon-cog gray"></span>
+				</div>
+			</div>
+
+	    <div id="settings" style="display: none" class="row settings-container bottom-buffer">
+			<h2 class="heading">Settings</h2>
+
+				<form class="form-horizontal" role="form">
+
+					<div class="form-group">
+						<label class="col-md-2 control-label">Events to include:</label>
+						<div class="col-md-5">
+							<label class="checkbox-inline no_indent">
+							  <input type="checkbox" class="include" value="Lecture" checked>Lectures
+							</label>
+							<label class="checkbox-inline no_indent">
+							  <input type="checkbox" class="include" value="Problems class" checked>Problem Classes
+							</label>
+							<label class="checkbox-inline no_indent">
+							  <input type="checkbox" class="include" value="Tutorial" checked>Tutorials
+							</label>
+							<label class="checkbox-inline no_indent">
+							  <input type="checkbox" class="include" value="Test" checked>Tests
+							</label>
+							<label class="checkbox-inline no_indent">
+							  <input type="checkbox" class="include" value="Other" checked>Other
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-2 control-label">Event title format:</label>
+						<div class="col-md-4">
+							<input id="eventtitle" class="form-control" type="text" value="{code} - {name} {type}" data-toggle="tooltip" title="The templates {code}, {name} and {type} can be used to represent the course code, course name and event type (e.g. Lecture or Problems Class) respectively.">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-md-2 control-label">Event title preview:</label>
+						<div class="col-md-4">
+							<p class="form-control-static" id="titlepreview">M3P17 - Algebraic Combinatorics Lecture</p>
+						</div>
+					</div>
+
+				</form>
+
+	    </div>
+
+			<div class="row">
+				<div class="col-md-4">
+					<div class="section">
+						<h2 class="heading">About</h2>
+						<p>Fed up with checking the original timetable and trying to remember which week it is or manually updating your calendar each term? If so, you're in the right place.</p>
+						<p>You can choose your modules
+						{% if is_mobile %}
+							below
+						{% else %}
+							on the right
+						{% endif %}
+						(using the filters below might help).</p><p>
+						{% if is_mobile %}
+						Note: iOS users will need to be using Safari.
+						{% else %}
+						Download your calendar (.ics) file and import it into your favourite calendar program.</p>
+						{% endif %}
+						<p>Settings are at the top-right.</p>
+						<p>Source available on <a href="https://github.com/jordannoble/icmaths-timetabler">github</a></p>
+					</div>
+					<div id="filters" class="section">
+						<h2 class="heading">Filters</h2>
+						<div>
+							<label class="pull-left lbl-filter">Year</label>
+							<div class="btn-group" data-toggle="buttons" data-filter-group="year">
+								<label class="btn btn-default active" data-filter="">
+									<input type="radio">Any
+								</label>
+								<label class="btn btn-default" data-filter=".m1">
+									<input type="radio">M1
+								</label>
+								<label class="btn btn-default" data-filter=".m2">
+									<input type="radio">M2
+								</label>
+								<label class="btn btn-default" data-filter=".m3">
+									<input type="radio">M3
+								</label>
+								<label class="btn btn-default" data-filter=".m4">
+									<input type="radio">M4
+								</label>
+								<label class="btn btn-default" data-filter=".m5">
+									<input type="radio">MSc
+								</label>
+							</div>
+						</div>
+						<div class="top-buffer">
+							<label class="pull-left lbl-filter">Area</label>
+							<div class="btn-group" data-toggle="buttons" data-filter-group="area">
+								<label class="btn btn-default active" data-filter="">
+									<input type="radio">Any
+								</label>
+								<label class="btn btn-default btn-applied" data-filter=".applied">
+									<input type="radio">Applied
+								</label>
+								<label class="btn btn-default btn-pure" data-filter=".pure">
+									<input type="radio">Pure
+								</label>
+								<label class="btn btn-default btn-statistics" data-filter=".statistics">
+									<input type="radio">Statistics
+								</label>
+							</div>
+						</div>
+					</div>
+
+					<div id="errors" style="display: none" class="errors"></div>
+					<div class="download">
+						<button type="button" id="download" class="btn btn-primary btn-lg btn-download">Download Calendar</button>
+					</div>
+
+				</div>
+				<div class="col-md-7 col-md-offset-1">
+					<div id="container" class="iso-container">
+						<div class="loading">Loading Modules...</div>
+					</div>
+				</div>
+			</div>
+
+	    </div>
+
+   		<!-- /container -->
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+ 		<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='js/jquery-1.10.1.min.js') }}"><\/script>')</script>
+		<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    </body>
+</html>
