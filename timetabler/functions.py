@@ -151,3 +151,11 @@ def filter_events(module_ids, categories):
       if event['type'] in categories or "Other" in categories:
         filtered_events.append(event)
   return filtered_events
+
+
+# def delete_old_modules():
+#   module_ids = [m['id'] for m in json.loads(redis.get('module_list'))]
+#   redis_keys = redis.keys()
+#   for key in redis_keys:
+#     if key not in module_ids and re.match("^m[^0-9]*", key):
+#       redis.delete(key)
