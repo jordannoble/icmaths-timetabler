@@ -14,6 +14,8 @@ python run.py
 
 ### Future Ideas
 
+- Calendar subscriptions (i.e. calendar updates if timetable changes)
+- Timetable Presets (e.g. first year, second year + options)
 - Option to set alerts before events in settings.
 - Staff timetables.
 - PDF output.
@@ -23,6 +25,7 @@ python run.py
 - Create unit tests.
 - Improve general error checking.
 - Improve init code (e.g. setup DB)
+- Consider external filesystem (e.g. S3)
 
 ---
 
