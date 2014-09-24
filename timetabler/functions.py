@@ -32,10 +32,7 @@ def root_from_url(url):
 
 def update_term():
     current_term = json.dumps(get_current_term())
-    try:
-      redis.set('current_term', current_term)
-    except:
-      print 'Failed to update current_term'
+    redis.set('current_term', current_term)
 
 
 def update_module_list():
@@ -49,10 +46,7 @@ def update_module_list():
         module_list.append(dict(code=module_name_split[0],
                                 name=module_name_split[1],
                                 id='m' + module.get('id')))
-    try:
-      redis.set('module_list', json.dumps(module_list))
-    except:
-      print 'Failed to update module_list.'
+    redis.set('module_list', json.dumps(module_list))
 
 
 def get_room(event):
@@ -82,10 +76,7 @@ def update_events_by_id(module_id):
                            week=event.get('date'),
                            day=event.find('day').text,
                            room=get_room(event)))
-  try:
-    redis.set(module_id, json.dumps(event_list))
-  except:
-    print ''.join(['Failed to update events for module ', module_id, '.'])
+  redis.set(module_id, json.dumps(event_list))
 
 
 def update_all_events():
@@ -132,15 +123,30 @@ def update_all_events():
 
 
 def update_all():
-  print 'Updating term...',
-  update_term()
-  print 'Updated.'
-  print 'Updating module list...',
-  update_module_list()
-  print 'Updated.'
-  print 'Updating events...',
-  update_all_events()
-  print 'Updated.'
+  print "Updating term...",
+  try:
+    update_term()
+    print "Updated."
+  except:
+    print "Failed to update term."
+  print "Updating module_list",
+  try:
+    update_module_list()
+    print "Updated."
+  except:
+    print "Failed to update module_list."
+  print "Deleting old modules...",
+  try:
+    delete_old_modules()
+    print "Deleted."
+  except:
+    print "Failed to delete old modules."
+  print "Updating events...",
+  try:
+    update_all_events()
+    print "Updated."
+  except:
+    print "Failed to update events."
 
 
 def filter_events(module_ids, categories):
@@ -153,9 +159,9 @@ def filter_events(module_ids, categories):
   return filtered_events
 
 
-# def delete_old_modules():
-#   module_ids = [m['id'] for m in json.loads(redis.get('module_list'))]
-#   redis_keys = redis.keys()
-#   for key in redis_keys:
-#     if key not in module_ids and re.match("^m[^0-9]*", key):
-#       redis.delete(key)
+def delete_old_modules():
+  list_module_ids = [m['id'] for m in json.loads(redis.get('module_list'))]
+  redis_keys = redis.keys()
+  for key in redis_keys:
+    if key not in list_module_ids and re.match("^m[0-9]+", key):
+      redis.delete(key)
